@@ -11,15 +11,12 @@ class Command(BaseCommand):
             return json.load(file)
 
     def handle(self, *args, **options):
-        # Удалите все объекты из базы данных
         Product.objects.all().delete()
         Category.objects.all().delete()
 
-        # Загрузите категории и продукты из фикстур
         categories_data = self.json_read('catalog/fixtures/categories_data.json')
         products_data = self.json_read('catalog/fixtures/products_data.json')
 
-        # Создайте объекты Category
         categories_for_create = []
         for category in categories_data:
             categories_for_create.append(
@@ -31,7 +28,6 @@ class Command(BaseCommand):
             )
         Category.objects.bulk_create(categories_for_create)
 
-        # Создайте объекты Product
         products_for_create = []
         for product in products_data:
             category = Category.objects.get(id=product['fields']['category'])
